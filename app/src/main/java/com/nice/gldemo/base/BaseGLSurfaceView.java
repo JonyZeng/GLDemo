@@ -2,7 +2,6 @@ package com.nice.gldemo.base;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.util.AttributeSet;
 
 /**
  * GLSurfaceView基类

@@ -16,8 +16,8 @@ public class TriangleGlSurfaceView extends BaseGLSurfaceView {
     public TriangleGlSurfaceView(Context context) {
         super(context);
 //        setRenderer(new TriangleRender());
-//        setRenderer(new CameraTriangleRender());
-        setRenderer(new CameraColorTriangleRender());
+        setRenderer(new CameraTriangleRender());
+//        setRenderer(new CameraColorTriangleRender());
     }
 
     /**
