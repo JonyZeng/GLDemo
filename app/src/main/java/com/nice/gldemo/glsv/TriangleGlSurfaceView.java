@@ -5,7 +5,10 @@ import android.opengl.GLES20;
 
 import com.nice.gldemo.base.BaseGLSL;
 import com.nice.gldemo.base.BaseGLSurfaceView;
+import com.nice.gldemo.shape.Circle;
+import com.nice.gldemo.shape.Cube;
 import com.nice.gldemo.shape.square.Square;
+import com.nice.gldemo.shape.square.SquareColor;
 import com.nice.gldemo.shape.triangle.CameraTriangle;
 import com.nice.gldemo.shape.triangle.ColorTriangle;
 import com.nice.gldemo.shape.triangle.Triangle;
@@ -26,7 +29,10 @@ public class TriangleGlSurfaceView extends BaseGLSurfaceView {
 //        setRenderer(new CameraTriangleRender());
 //        setRenderer(new CameraColorTriangleRender());
 //        setRenderer(new ColorTriangle());
-        setRenderer(new Square());
+//        setRenderer(new Square());
+//        setRenderer(new SquareColor());
+//        setRenderer(new Circle());
+        setRenderer(new Cube());
     }
 
     /**

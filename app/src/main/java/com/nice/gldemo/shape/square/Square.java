@@ -28,10 +28,10 @@ public class Square extends BaseGLSL implements GLSurfaceView.Renderer {
                     "  gl_FragColor = vColor;" +
                     "}";
     static final float triangleCoords[] = {
-            -0.5f, -0.5f, 0.0f, // top left
-            0.5f, -0.5f, 0.0f, // bottom left
-            -0.5f, 0.5f, 0.0f, // bottom right
-            0.5f, 0.5f, 0.0f  // top right
+            -0.5f, -0.5f, 0.0f, // top left     0
+            0.5f, -0.5f, 0.0f, // bottom left   1
+            -0.5f, 0.5f, 0.0f, // bottom right  2
+            0.5f, 0.5f, 0.0f  // top right      3
     };
     //采用坐标索引法来绘制图形
     static short index[] = {
