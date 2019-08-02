@@ -3,6 +3,7 @@ package com.nice.gldemo.shape.triangle;
 import android.opengl.GLES20;
 
 import com.nice.gldemo.base.BaseGLSL;
+import com.nice.gldemo.util.BufferUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,6 +17,7 @@ import java.nio.FloatBuffer;
  * Program(程式) 一个OpenGLES对象，包含了你想要用来绘制一个或多个状态的shader
  */
 public class Triangle extends BaseGLSL {
+    //加载顶点着色器
     static final String vertexShaderCode =
             "attribute vec4 vPosition;\n" +
                     "void main(){\n" +
@@ -27,6 +29,7 @@ public class Triangle extends BaseGLSL {
                     "void main(){\n" +
                     "  gl_FragColor = vColor;\n" +
                     "}";
+    private final FloatBuffer mFloatBuffer;
 
     int mProgram;
     //三角形的坐标,每一个向量点都是三维的，需要三组数据确定一个向量点
@@ -44,12 +47,10 @@ public class Triangle extends BaseGLSL {
 
     public Triangle() {
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);    //申请底色空间
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(Triangle.triangleCoords.length * 4);
-        byteBuffer.order(ByteOrder.nativeOrder());
-
-        //将坐标数据转换成floatBuffer，用以传入程序
-        vertexBuffer = byteBuffer.asFloatBuffer();
-        vertexBuffer.put(Triangle.triangleCoords);
+        //将float数组排序并转换成floatBuffer数组
+        mFloatBuffer = BufferUtil.createFloatBuffer(triangleCoords);
+        vertexBuffer = mFloatBuffer;
+        vertexBuffer.put(triangleCoords);
         vertexBuffer.position(0);
 
         mProgram = createOpenGLProgram(vertexShaderCode, fragmentShaderCode);

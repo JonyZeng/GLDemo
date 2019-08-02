@@ -17,9 +17,9 @@ public class CameraTriangle extends Triangle {
                     "void main() {\n" +
                     "    gl_Position = vMatrix * vPosition;\n" +
                     "}";
-    private float[] mViewMatrix = new float[16];
-    private float[] mProjectMatrix = new float[16];
-    private float[] mMVPMatrix = new float[16];
+    private float[] mViewMatrix = new float[16];      //定义相机矩阵
+    private float[] mProjectMatrix = new float[16];   //定义透视矩阵
+    private float[] mMVPMatrix = new float[16];       //实际变换矩阵
 
     private int mMatrixHandler;
     private int mPositionHandle;
@@ -40,14 +40,21 @@ public class CameraTriangle extends Triangle {
     }
 
     public void onSurfaceChanged(int width, int height) {
+
+        //1.获取GLSurfaceView的宽高比例
         float ratio = (float) width / height;
-        //变换矩阵
+        //填充了一个投影矩阵
         Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
 
-        //设置相机的视角位置
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        // 在绘图对象上只应用一个投影变换时会导致显示empty display。所以我们在投影变化时通常还需要进行一个相机视角转化，使得显示对象能全部出现在屏幕上。
 
-        //设置变换
+        //设置相机的视角位置
+        Matrix.setLookAtM(mViewMatrix, 0,
+                0, 0, -3,
+                0f, 0f, 0f,
+                0f, 1.0f, 0.0f);
+
+        //将之前计算的投影矩阵结合起来，结合后的变换矩阵传递给绘制对象
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
     }
 

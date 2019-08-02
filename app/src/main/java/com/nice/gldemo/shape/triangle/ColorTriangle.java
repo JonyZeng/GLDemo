@@ -1,4 +1,4 @@
-package com.nice.gldemo.shape.square;
+package com.nice.gldemo.shape.triangle;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -7,82 +7,86 @@ import android.opengl.Matrix;
 import com.nice.gldemo.base.BaseGLSL;
 import com.nice.gldemo.util.BufferUtil;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class Square extends BaseGLSL implements GLSurfaceView.Renderer {
+import static com.nice.gldemo.shape.triangle.Triangle.vertexBuffer;
+
+
+public class ColorTriangle extends BaseGLSL implements GLSurfaceView.Renderer {
+    private final FloatBuffer mVertexBuffer;
+    private final FloatBuffer mColorBuffer;
+    private int mProgram;
     private final String vertexShaderCode =
             "attribute vec4 vPosition;" +
                     "uniform mat4 vMatrix;" +
+                    "varying  vec4 vColor;" +
+                    "attribute vec4 aColor;" +
                     "void main() {" +
                     "  gl_Position = vMatrix*vPosition;" +
+                    "  vColor=aColor;" +
                     "}";
-
-    private final String fragmentShaderCode =
-            "precision mediump float;" +
-                    "uniform vec4 vColor;" +
-                    "void main() {" +
-                    "  gl_FragColor = vColor;" +
+    static final String fragmentShaderCode =
+            "precision mediump float;\n" +
+                    "varying vec4 vColor;\n" +
+                    "void main(){\n" +
+                    "  gl_FragColor = vColor;\n" +
                     "}";
-    static final float triangleCoords[] = {
-            -0.5f, 0.5f, 0.0f, // top left
-            -0.5f, -0.5f, 0.0f, // bottom left
-            0.5f, -0.5f, 0.0f, // bottom right
-            0.5f, 0.5f, 0.0f  // top right
+    static float[] triangleCoords = {
+            0.5f, 0.5f, 0.0f,   //左上
+            -0.5f, -0.5f, 0.0f, //左下
+            0.5f, -0.5f, 0.0f,  //右下
     };
-    //采用坐标索引法来绘制图形
-    static short index[] = {
-            0, 1, 2, 0, 2, 3
-    };
-    private final FloatBuffer mVertexBuffer;
-    private final ShortBuffer mIndexBuffer;
-    private int mProgram;
-    private float[] mViewMatrix = new float[16];     //相机视觉变换矩阵
-    private float[] mProjectMatrix = new float[16]; //透视变换矩阵
-    private float[] mMVPMatrix = new float[16];     //传入到OpenGL中的实际变换矩阵
-
-    //顶点个数
-    private final int vertexCount = triangleCoords.length / COORDS_PRE_VERTEX;   //顶点个数等于数组的长度除以顶点坐标数
-
-    //顶点之间的偏移量
-    private final int vertexStride = COORDS_PRE_VERTEX * 4; // float每个顶点四个字节
-
     //设置颜色
-    float color[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    float color[] = {
+            0.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f
+    };
+    private float[] mViewMatrix = new float[16];      //定义相机矩阵
+    private float[] mProjectMatrix = new float[16];   //定义透视矩阵
+    private float[] mMVPMatrix = new float[16];       //实际变换矩阵
+    static final int vertexCount = triangleCoords.length / COORDS_PRE_VERTEX;
     private int mMatrixHandler;
     private int mPositionHandle;
     private int mColorHandle;
 
-    public Square() {
+    public ColorTriangle() {
+        //1、获取顶点数据
         mVertexBuffer = BufferUtil.createFloatBuffer(triangleCoords);
-        mIndexBuffer = BufferUtil.createShortBuffer(index);
+        mColorBuffer = BufferUtil.createFloatBuffer(color);
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         mVertexBuffer.position(0);
-        mIndexBuffer.position(0);
+        mColorBuffer.position(0);
+        //加载顶点着色器,获取program
         mProgram = createOpenGLProgram(vertexShaderCode, fragmentShaderCode);
+        //将程序加入到OpenGLES2.0环境
+        GLES20.glUseProgram(mProgram);
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         //计算宽高比
         float ratio = (float) width / height;
-        //设置透视投影
+        //投影矩阵  透视投影
         Matrix.frustumM(mProjectMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-        //设置相机位置
+        //设置相机矩阵
         Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 7.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-        //计算变换矩阵
+        //将相机矩阵和投影矩阵相乘，得到实际的变换矩阵
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectMatrix, 0, mViewMatrix, 0);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        GLES20.glUseProgram(mProgram);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+
         //获取变换矩阵vMatrix成员句柄
         mMatrixHandler = GLES20.glGetUniformLocation(mProgram, "vMatrix");
         //指定vMatrix的值
@@ -96,13 +100,14 @@ public class Square extends BaseGLSL implements GLSurfaceView.Renderer {
                 GLES20.GL_FLOAT, false,
                 vertexStride, mVertexBuffer);
         //获取片元着色器的vColor成员的句柄
-        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
+        mColorHandle = GLES20.glGetAttribLocation(mProgram, "aColor");
         //设置绘制三角形的颜色
-        GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+        GLES20.glEnableVertexAttribArray(mColorHandle);
+        GLES20.glVertexAttribPointer(mColorHandle, 4,
+                GLES20.GL_FLOAT, false,
+                0, mColorBuffer);
         //绘制三角形
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, vertexCount);
-        //索引法绘制正方形
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, index.length, GLES20.GL_UNSIGNED_SHORT, mIndexBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
         //禁止顶点数组的句柄
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }

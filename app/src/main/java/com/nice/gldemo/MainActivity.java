@@ -16,9 +16,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        mTriangleGlSurfaceView = new TriangleGlSurfaceView(this);
-        mRotateTriangleGLSurfaceView = new RotateTriangleGLSurfaceView(this);
-        setContentView(mRotateTriangleGLSurfaceView);
+        mTriangleGlSurfaceView = new TriangleGlSurfaceView(this);
+//        mRotateTriangleGLSurfaceView = new RotateTriangleGLSurfaceView(this);
+        setContentView(mTriangleGlSurfaceView);
     }
 
 

@@ -73,19 +73,21 @@ public class RotateTriangleGLSurfaceView extends BaseGLSurfaceView {
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            //通过方法 填充到投影变换矩阵中
+            //通过方法 透视投影
             Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
             float[] floats = new float[16];
+            //清楚颜色缓冲区，开始新一帧的绘制，所以要清理，避免脏数据
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
             Log.d(TAG, "onDrawFrame: mAngle  = " + mAngle);
             //设置相机的位置
             Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
             //将其与之前计算出的投影矩阵结合在一起。合并后的矩阵 传递给绘制的图形
 
+            //将设置相机获取到的矩阵和投影获取到的矩阵相乘，得到实际的变换矩阵
             Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 //            long time = SystemClock.uptimeMillis() % 4000L;
 //            float angle = 0.090f * ((int) time);
