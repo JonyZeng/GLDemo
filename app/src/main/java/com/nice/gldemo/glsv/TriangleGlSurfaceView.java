@@ -25,8 +25,8 @@ public class TriangleGlSurfaceView extends BaseGLSurfaceView {
 //        setRenderer(new CrameraTriangleRender());
 //        setRenderer(new CameraTriangleRender());
 //        setRenderer(new CameraColorTriangleRender());
-        setRenderer(new ColorTriangle());
-//        setRenderer(new Square());
+//        setRenderer(new ColorTriangle());
+        setRenderer(new Square());
     }
 
     /**
@@ -103,10 +103,12 @@ public class TriangleGlSurfaceView extends BaseGLSurfaceView {
                 "}";
         private final FloatBuffer mColorData;
 
-        private float[] POINT_DATA = {-0.5f, -0.5f,
+        private float[] POINT_DATA = {
+                -0.5f, -0.5f,
                 0.5f, -0.5f,
                 -0.5f, 0.5f,
-                0.5f, 0.5f};
+                0.5f, 0.5f
+        };
         private float[] COLOR_DATA = {
                 // 一个顶点有3个向量数据：r、g、b
                 1f, 0.5f, 0.5f, 1f, 0f, 1f, 0f, 1f, 1f, 1f, 1f, 0f};

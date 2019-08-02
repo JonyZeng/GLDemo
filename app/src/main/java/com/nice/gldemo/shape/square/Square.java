@@ -28,14 +28,14 @@ public class Square extends BaseGLSL implements GLSurfaceView.Renderer {
                     "  gl_FragColor = vColor;" +
                     "}";
     static final float triangleCoords[] = {
-            -0.5f, 0.5f, 0.0f, // top left
-            -0.5f, -0.5f, 0.0f, // bottom left
-            0.5f, -0.5f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, // top left
+            0.5f, -0.5f, 0.0f, // bottom left
+            -0.5f, 0.5f, 0.0f, // bottom right
             0.5f, 0.5f, 0.0f  // top right
     };
     //采用坐标索引法来绘制图形
     static short index[] = {
-            0, 1, 2, 0, 2, 3
+            0, 1, 2, 1, 2, 3
     };
     private final FloatBuffer mVertexBuffer;
     private final ShortBuffer mIndexBuffer;
@@ -100,9 +100,9 @@ public class Square extends BaseGLSL implements GLSurfaceView.Renderer {
         //设置绘制三角形的颜色
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
         //绘制三角形
-//        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, vertexCount);
-        //索引法绘制正方形
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, index.length, GLES20.GL_UNSIGNED_SHORT, mIndexBuffer);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, vertexCount);
+//        索引法绘制正方形
+//        GLES20.glDrawElements(GLES20.GL_TRIANGLES, index.length, GLES20.GL_UNSIGNED_SHORT, mIndexBuffer);
         //禁止顶点数组的句柄
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }
